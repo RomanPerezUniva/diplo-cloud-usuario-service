@@ -128,6 +128,7 @@ db.colonias.insertMany( [
 ]);
 ```
 
+```shell
 spring.data.mongodb.host=  ${MONGO_HOSTNAME}
 spring.data.mongodb.port=  ${MONGO_PORT}
 spring.data.mongodb.authentication-database=  ${MONGO_AUTHDB}
@@ -137,6 +138,8 @@ spring.data.mongodb.password=  ${MONGO_PWD}
 
 
 server.port=  ${TOMCAT_PORT}
+}' 
+```
 
 
 ## Deploy
