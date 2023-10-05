@@ -8,9 +8,127 @@ The usuario microservice provides the following functionalities:
 
 The following scripts are provided for the MongoDB database/collections creation:
 * usuariodb_creation.js
+
+```shell
+use admin;
+db.createUser(
+{
+	user: "usuario_owner",
+	pwd: "usuario_password",
+	roles: [ { role: "userAdmin", db: "usuariodb" }]
+});
+```
+
+  
 * estado_collection.js
+
+```shell
+db.createCollection('estados', {
+  validator: {
+    $jsonSchema: {
+	  required: ['nombre'],
+      properties: {
+        nombre: {
+          type: 'string',
+          description: 'nombre del estado requerido'
+        }
+      }
+    }
+  }
+});
+
+db.estados.createIndex( { nombre: 1 }, { unique: true } );
+```
+
+
 * tipo_domicilio_collection.js
+
+```shell
+db.createCollection('tiposDomicilio', {
+  validator: {
+    $jsonSchema: {
+	  required: ['descripcion'],
+      properties: {
+        descripcion: {
+          type: 'string',
+          description: 'descripcion tipoDomicilio requerido'
+        }
+      }
+    }
+  }
+});
+
+db.tiposDomicilio.createIndex( { descripcion: 1 }, { unique: true } );
+
+db.tiposDomicilio.insertMany( [
+   { descripcion: "Entrega" },
+   { descripcion: "Facturacion" }
+]);
+```
+
 * load_collections_data.js
+```shell
+
+// insert estados
+db.estados.insertMany( [
+   	{ 
+	   nombre: "CIUDAD DE MÉXICO" 
+	}
+]);
+
+// insert municipios
+db.municipios.insertMany( [
+   	{ 
+	   	nombre: "Miguel Hidalgo", 
+	   	estado: DBRef("estados", db.estados.findOne({nombre: "CIUDAD DE MÉXICO"})._id)
+	},
+	{ 
+	   	nombre: "Cuauhtémoc", 
+	   	estado: DBRef("estados", db.estados.findOne({nombre: "CIUDAD DE MÉXICO"})._id)
+	}
+]);
+
+// insert colonias
+db.colonias.insertMany( [
+   	{ 
+	   	nombre: "Santa María la Ribera", 
+	   	cp: "06400",
+	   	municipio: DBRef("municipios", db.municipios.findOne({nombre: "Cuauhtémoc"})._id)
+	},
+	{ 
+	   	nombre: "San Rafael", 
+	   	cp: "06400",
+	   	municipio: DBRef("municipios", db.municipios.findOne({nombre: "Cuauhtémoc"})._id)
+	},
+	{ 
+	   	nombre: "Guerrero", 
+	   	cp: "06300",
+	   	municipio: DBRef("municipios", db.municipios.findOne({nombre: "Cuauhtémoc"})._id)
+	},
+	{ 
+	   	nombre: "Anáhuac", 
+	   	cp: "11320",
+	   	municipio: DBRef("municipios", db.municipios.findOne({nombre: "Miguel Hidalgo"})._id)
+	},
+	{ 
+	   	nombre: "Lomas de Chapultepec I Sección", 
+	   	cp: "11000",
+	   	municipio: DBRef("municipios", db.municipios.findOne({nombre: "Miguel Hidalgo"})._id)
+	},
+	{ 
+	   	nombre: "Lomas de Chapultepec II Sección", 
+	   	cp: "11000",
+	   	municipio: DBRef("municipios", db.municipios.findOne({nombre: "Miguel Hidalgo"})._id)
+	},
+	{ 
+	   	nombre: "Lomas de Chapultepec III Sección", 
+	   	cp: "11000",
+	   	municipio: DBRef("municipios", db.municipios.findOne({nombre: "Miguel Hidalgo"})._id)
+	}
+]);
+```
+
+
 
 
 ## Deploy
